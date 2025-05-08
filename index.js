@@ -7,6 +7,7 @@ async function main() {
         console.log("New item found:", newestItem);
         await bot.sendOlxItem(newestItem);
     }
+    console.log("Waiting 1 hour till next check");
     await new Promise((resolve) => setTimeout(resolve, 60_000*60)); // 1 hour 
 } 
 
