@@ -86,7 +86,11 @@ class Browser {
 	}
 
 	async getNewestItem() {
-		const newestProduct = await this.page.$$(PRODUCT_SELECTOR)[0];
+        await this.page.goto(this.url, {
+			waitUntil: "domcontentloaded",
+		});
+		const PRODUCT_SELECTOR = ".css-l9drzq";
+		const newestProduct = (await this.page.$$(PRODUCT_SELECTOR))[0];
 		const title = await newestProduct.$eval(
 			".css-1g61gc2",
 			(el) => el.innerText,

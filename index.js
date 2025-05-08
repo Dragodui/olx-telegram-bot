@@ -12,10 +12,10 @@ async function main() {
 
 (async () => {
 	await browser.initialize();
-	await browser.parseOlxData();
     await bot.launch();
-    const currentItems = await browser.parseOlxData();
-    await bot.sendMultipleOlxItems(currentItems);
+	// await browser.parseOlxData();
+    // const currentItems = await browser.parseOlxData();
+    // await bot.sendMultipleOlxItems(currentItems);
     while (true) {
         try {
             await main();
