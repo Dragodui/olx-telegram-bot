@@ -38,7 +38,7 @@ jobs:
         uses: denoland/deployctl@v1
         with:
           project: "olx-node-telegram-bot"
-          entrypoint: "index.js"
-          root: ""
+          entrypoint: "./index.js"
+          root: "./"
           
           
