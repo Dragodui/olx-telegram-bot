@@ -86,7 +86,7 @@ class Browser {
 	}
 
 	async getNewestItem() {
-        await this.page.goto(this.url, {
+		await this.page.goto(this.url, {
 			waitUntil: "domcontentloaded",
 		});
 		const PRODUCT_SELECTOR = ".css-l9drzq";
@@ -107,7 +107,7 @@ class Browser {
 
 		if (this.lastItem === null || productData.title !== this.lastItem.title) {
 			this.lastItem = productData;
-            return this.lastItem;
+			return this.lastItem;
 		}
 
 		return null;

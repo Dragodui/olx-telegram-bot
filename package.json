@@ -6,7 +6,8 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev": "node index.js",
-		"format": "npx @biomejs/biome format --write ./"
+		"format": "npx @biomejs/biome format --write ./",
+		"build": ""
 	},
 	"keywords": [],
 	"author": "",
