@@ -12,7 +12,7 @@ class Browser {
 
 	async initialize() {
 		const { page, browser } = await connect({
-			headless: false,
+			headless: true,
 
 			args: [
 				"--disable-background-networking",
