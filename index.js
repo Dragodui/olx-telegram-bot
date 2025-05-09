@@ -1,8 +1,11 @@
+import { config } from "dotenv";
+config();
 import { browser } from "./src/Browser.js";
 import { db } from "./src/DB.js";
 import { bot } from "./src/TelegramBot.js";
 
 async function main() {
+	console.log("Checking for new items...");
 	const newestItem = await browser.getNewestItem();
 	if (newestItem) {
 		console.log("New item found:", newestItem);

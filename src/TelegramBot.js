@@ -1,6 +1,6 @@
-import { Telegraf } from "telegraf";
 import { config } from "dotenv";
-
+import { Telegraf } from "telegraf";
+import { db } from "./DB.js";
 config();
 class TelegramBot {
 	constructor(token, chatId) {
@@ -12,8 +12,8 @@ class TelegramBot {
 
 	async launch() {
 		try {
-			await bot.launch();
-			console.log("Telegram bot launched");
+			this.bot.launch().then(() => console.log("Bot launched"));
+			// console.log("Telegram bot launched");
 		} catch (error) {
 			console.error("Error launching bot:", error);
 		}
@@ -21,6 +21,7 @@ class TelegramBot {
 
 	setupCommands() {
 		this.bot.command("changeUrl", async (ctx) => {
+			console.log("Change URL command received:", ctx.message.text);
 			const newUrl = ctx.message.text.split(" ")[1];
 			if (newUrl) {
 				try {

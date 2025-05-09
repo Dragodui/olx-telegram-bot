@@ -15,7 +15,7 @@ class DB {
 
         await this.db.exec(`
             CREATE TABLE IF NOT EXISTS lastItem (
-                id TEXT PRIMARY KEY AUTOINCREMENT,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT,
                 price TEXT,
                 link TEXT,
@@ -26,9 +26,10 @@ class DB {
 
         this.db.exec(`
             CREATE TABLE IF NOT EXISTS currentLink (
-                id TEXT PRIMARY KEY AUTOINCREMENT,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 url TEXT
             )`);
+            console.log("Database initialized");
     }
 
     async insertLastItem(item) {
@@ -40,7 +41,7 @@ class DB {
     }
 
     async insertCurrentLink(url) {
-        await this.db.run('DELETE * FROM currentLink');
+        await this.db.run('DELETE FROM currentLink');
         await this.db.run(`
             INSERT INTO currentLink (url)
             VALUES (?)
@@ -59,6 +60,7 @@ class DB {
 
     async getLastItem() {
         const result = await this.db.get('SELECT * FROM lastItem ORDER BY id DESC LIMIT 1');
+        console.log(result);
         return result ? {
             title: result.title,
             price: result.price,

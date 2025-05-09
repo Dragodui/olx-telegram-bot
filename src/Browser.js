@@ -14,6 +14,7 @@ class Browser {
 	}
 
 	async initialize() {
+		await db.insertCurrentLink(this.url);
 		const { page, browser } = await connect({
 			headless: true,
 
@@ -55,6 +56,7 @@ class Browser {
 
 		this.page = page;
 		this.browser = browser;
+		console.log("Browser initialized");
 	}
 
 	async parseOlxData() {
