@@ -1,4 +1,7 @@
 import { connect } from "puppeteer-real-browser";
+import { db } from "./DB.js";
+import { config } from "dotenv";
+config();
 
 class Browser {
 	url = "";
@@ -85,7 +88,12 @@ class Browser {
 		return productData;
 	}
 
+	changeUrl(newUrl) {
+		this.url = newUrl;
+	}
+
 	async getNewestItem() {
+		this.lastItem = await db.getLastItem();
 		await this.page.goto(this.url, {
 			waitUntil: "domcontentloaded",
 		});
@@ -114,7 +122,4 @@ class Browser {
 	}
 }
 
-const OLX_URL =
-	"https://www.olx.pl/sport-hobby/rowery/rowery-gorskie/szczecin/?search%5Border%5D=created_at:desc&search%5Bfilter_float_price:to%5D=700&search%5Bfilter_enum_wheelsize%5D%5B0%5D=27-5&search%5Bfilter_enum_wheelsize%5D%5B1%5D=28&search%5Bfilter_enum_wheelsize%5D%5B2%5D=29&search%5Bfilter_enum_wheelsize%5D%5B3%5D=others";
-
-export const browser = new Browser(OLX_URL);
+export const browser = new Browser(process.env.OLX_URL);

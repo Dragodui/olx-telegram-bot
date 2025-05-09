@@ -1,10 +1,12 @@
 import { browser } from "./src/Browser.js";
+import { db } from "./src/DB.js";
 import { bot } from "./src/TelegramBot.js";
 
 async function main() {
 	const newestItem = await browser.getNewestItem();
 	if (newestItem) {
 		console.log("New item found:", newestItem);
+        await db.insertLastItem(newestItem);
 		await bot.sendOlxItem(newestItem);
 	}
 	console.log("Waiting 1 hour till next check");
@@ -12,11 +14,9 @@ async function main() {
 }
 
 (async () => {
+    await db.initialize();
 	await browser.initialize();
 	await bot.launch();
-	// await browser.parseOlxData();
-	// const currentItems = await browser.parseOlxData();
-	// await bot.sendMultipleOlxItems(currentItems);
 	while (true) {
 		try {
 			await main();

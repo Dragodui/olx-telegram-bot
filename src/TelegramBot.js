@@ -7,6 +7,7 @@ class TelegramBot {
 		this.token = token;
 		this.chatId = chatId;
 		this.bot = new Telegraf(token);
+		this.setupCommands();
 	}
 
 	async launch() {
@@ -17,8 +18,27 @@ class TelegramBot {
 			console.error("Error launching bot:", error);
 		}
 	}
+
+	setupCommands() {
+		this.bot.command("changeUrl", async (ctx) => {
+			const newUrl = ctx.message.text.split(" ")[1];
+			if (newUrl) {
+				try {
+					await db.insertCurrentLink(newUrl);
+					await ctx.reply(`URL changed to: ${newUrl}`);
+				} catch (err) {
+					console.error("Failed to change URL:", err);
+					await ctx.reply("Failed to change URL.");
+				}
+			} else {
+				await ctx.reply("⚠️ Please provide a new URL. Example: /changeUrl https://olx.pl/...");
+			}
+		});
+	}
+
 	async sendOlxItem(itemData) {
-		const { title, price, link, image, date } = itemData;
+		try {
+			const { title, price, link, image, date } = itemData;
 		const message = `${title} \n${price} \n${link} \n${date}`;
 		if (image) {
 			await this.bot.telegram.sendPhoto(this.chatId, image, {
@@ -26,6 +46,9 @@ class TelegramBot {
 			});
 		} else {
 			await this.bot.telegram.sendMessage(this.chatId, message);
+		}
+		} catch (error) {
+		console.error("Error sending message:", error);	
 		}
 	}
 
