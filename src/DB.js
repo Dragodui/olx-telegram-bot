@@ -1,6 +1,7 @@
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import { browser } from './Browser.js';
+import logger from './logger.js';
 
 class DB {
     constructor() {
@@ -29,7 +30,7 @@ class DB {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 url TEXT
             )`);
-            console.log("Database initialized");
+            logger.info("Database initialized");
     }
 
     async insertLastItem(item) {

@@ -1,6 +1,7 @@
 import { config } from "dotenv";
 import { Telegraf } from "telegraf";
 import { db } from "./DB.js";
+import logger from "./logger.js";
 config();
 class TelegramBot {
 	constructor(token, chatId) {
@@ -12,42 +13,41 @@ class TelegramBot {
 
 	async launch() {
 		try {
-			this.bot.launch().then(() => console.log("Bot launched"));
-			// console.log("Telegram bot launched");
+			this.bot.launch().then(() => logger.info("Bot launched"));;
 		} catch (error) {
-			console.error("Error launching bot:", error);
+			logger.error("Error launching bot:", error);
 		}
 	}
 
 	setupCommands() {
 		this.bot.command("changeUrl", async (ctx) => {
-			console.log("Change URL command received:", ctx.message.text);
+			logger.info("Change URL command received:", ctx.message.text);
 			const newUrl = ctx.message.text.split(" ")[1];
 			if (newUrl) {
 				try {
 					await db.insertCurrentLink(newUrl);
 					await ctx.reply(`URL changed to: ${newUrl}`);
 				} catch (err) {
-					console.error("Failed to change URL:", err);
+					logger.error("Failed to change URL:", err);
 					await ctx.reply("Failed to change URL.");
 				}
 			} else {
-				await ctx.reply("⚠️ Please provide a new URL. Example: /changeUrl https://olx.pl/...");
+				await ctx.reply("Please provide a new URL. Example: /changeUrl https://olx.pl/...");
 			}
 		});
 
 		this.bot.command("getUrl", async (ctx) => {
-			console.log("Get URL command received");
+			logger.info("Get URL command received");
 			try {
 				
 			const currentLink  = await db.getCurrentLink();
 			if (currentLink) {
 				await ctx.reply(`Current URL: ${currentLink}`);
 			} else {
-				await ctx.reply("⚠️ No URL found. Please set a URL first using /changeUrl.");
+				await ctx.reply("No URL found. Please set a URL first using /changeUrl.");
 			}
 			} catch (error) {
-				console.error("Error getting URL:", error);
+				logger.error("Error getting URL:", error);
 			}
 
 		});
@@ -65,7 +65,7 @@ class TelegramBot {
 			await this.bot.telegram.sendMessage(this.chatId, message);
 		}
 		} catch (error) {
-		console.error("Error sending message:", error);	
+		logger.error("Error sending message:", error);	
 		}
 	}
 
@@ -75,8 +75,8 @@ class TelegramBot {
 		}
 	}
 }
-console.log("Bot token:", process.env.BOT_TOKEN);
-console.log("Chat ID:", process.env.CHAT_ID);
+logger.info("Bot token:", process.env.BOT_TOKEN);
+logger.info("Chat ID:", process.env.CHAT_ID);
 export const bot = new TelegramBot(
 	process.env.BOT_TOKEN,
 	Number(process.env.CHAT_ID),

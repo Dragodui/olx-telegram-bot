@@ -1,6 +1,7 @@
 import { connect } from "puppeteer-real-browser";
 import { db } from "./DB.js";
 import { config } from "dotenv";
+import logger from "./logger.js";
 config();
 
 class Browser {
@@ -56,7 +57,7 @@ class Browser {
 
 		this.page = page;
 		this.browser = browser;
-		console.log("Browser initialized");
+		logger.info("Browser initialized");
 	}
 
 	async parseOlxData() {
@@ -114,7 +115,7 @@ class Browser {
 		const date = await newestProduct.$eval(".css-vbz67q", (el) => el.innerText);
 
 		const productData = { title, price, link, image, date };
-		console.log("Product data:", productData);
+		logger.info("Product data:", productData);
 
 		if (this.lastItem === null || productData.title !== this.lastItem.title) {
 			this.lastItem = productData;
