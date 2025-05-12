@@ -60,7 +60,6 @@ class DB {
 
     async getLastItem() {
         const result = await this.db.get('SELECT * FROM lastItem ORDER BY id DESC LIMIT 1');
-        console.log(result);
         return result ? {
             title: result.title,
             price: result.price,

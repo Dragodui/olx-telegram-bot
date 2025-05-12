@@ -3,6 +3,7 @@ config();
 import { browser } from "./src/Browser.js";
 import { db } from "./src/DB.js";
 import { bot } from "./src/TelegramBot.js";
+import { wait } from "./src/utils.js";
 
 async function main() {
 	console.log("Checking for new items...");
@@ -13,7 +14,7 @@ async function main() {
 		await bot.sendOlxItem(newestItem);
 	}
 	console.log("Waiting 1 hour till next check");
-	await new Promise((resolve) => setTimeout(resolve, 60_000 * 60)); // 1 hour
+	await wait(60 * 60 * 1000); // 1 hour
 }
 
 (async () => {
@@ -25,6 +26,7 @@ async function main() {
 			await main();
 		} catch (error) {
 			console.error("Error in main loop:", error);
+			await wait(1000*60); // Wait 1 second before retrying
 		}
 	}
 })();

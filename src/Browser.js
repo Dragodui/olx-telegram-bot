@@ -114,6 +114,7 @@ class Browser {
 		const date = await newestProduct.$eval(".css-vbz67q", (el) => el.innerText);
 
 		const productData = { title, price, link, image, date };
+		console.log("Product data:", productData);
 
 		if (this.lastItem === null || productData.title !== this.lastItem.title) {
 			this.lastItem = productData;

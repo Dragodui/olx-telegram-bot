@@ -35,6 +35,22 @@ class TelegramBot {
 				await ctx.reply("⚠️ Please provide a new URL. Example: /changeUrl https://olx.pl/...");
 			}
 		});
+
+		this.bot.command("getUrl", async (ctx) => {
+			console.log("Get URL command received");
+			try {
+				
+			const currentLink  = await db.getCurrentLink();
+			if (currentLink) {
+				await ctx.reply(`Current URL: ${currentLink}`);
+			} else {
+				await ctx.reply("⚠️ No URL found. Please set a URL first using /changeUrl.");
+			}
+			} catch (error) {
+				console.error("Error getting URL:", error);
+			}
+
+		});
 	}
 
 	async sendOlxItem(itemData) {
