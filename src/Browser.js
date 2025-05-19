@@ -126,6 +126,6 @@ class Browser {
 	}
 }
 export const createBrowser = async () => {
-	const link = await db.getCurrentLink() || process.env.OLX_URL;
+	const link = (await db.getCurrentLink()) || process.env.OLX_URL;
 	return new Browser(link);
 };

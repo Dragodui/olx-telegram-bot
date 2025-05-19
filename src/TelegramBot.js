@@ -13,7 +13,7 @@ class TelegramBot {
 
 	async launch() {
 		try {
-			this.bot.launch().then(() => logger.info("Bot launched"));;
+			this.bot.launch().then(() => logger.info("Bot launched"));
 		} catch (error) {
 			logger.error("Error launching bot:", error);
 		}
@@ -32,40 +32,42 @@ class TelegramBot {
 					await ctx.reply("Failed to change URL.");
 				}
 			} else {
-				await ctx.reply("Please provide a new URL. Example: /changeUrl https://olx.pl/...");
+				await ctx.reply(
+					"Please provide a new URL. Example: /changeUrl https://olx.pl/...",
+				);
 			}
 		});
 
 		this.bot.command("getUrl", async (ctx) => {
 			logger.info("Get URL command received");
 			try {
-				
-			const currentLink  = await db.getCurrentLink();
-			if (currentLink) {
-				await ctx.reply(`Current URL: ${currentLink}`);
-			} else {
-				await ctx.reply("No URL found. Please set a URL first using /changeUrl.");
-			}
+				const currentLink = await db.getCurrentLink();
+				if (currentLink) {
+					await ctx.reply(`Current URL: ${currentLink}`);
+				} else {
+					await ctx.reply(
+						"No URL found. Please set a URL first using /changeUrl.",
+					);
+				}
 			} catch (error) {
 				logger.error("Error getting URL:", error);
 			}
-
 		});
 	}
 
 	async sendOlxItem(itemData) {
 		try {
 			const { title, price, link, image, date } = itemData;
-		const message = `${title} \n${price} \n${link} \n${date}`;
-		if (image) {
-			await this.bot.telegram.sendPhoto(this.chatId, image, {
-				caption: message,
-			});
-		} else {
-			await this.bot.telegram.sendMessage(this.chatId, message);
-		}
+			const message = `${title} \n${price} \n${link} \n${date}`;
+			if (image) {
+				await this.bot.telegram.sendPhoto(this.chatId, image, {
+					caption: message,
+				});
+			} else {
+				await this.bot.telegram.sendMessage(this.chatId, message);
+			}
 		} catch (error) {
-		logger.error("Error sending message:", error);	
+			logger.error("Error sending message:", error);
 		}
 	}
 
