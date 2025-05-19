@@ -55,6 +55,3 @@ A Node.js-based Telegram bot that monitors OLX listings and notifies you of new 
 * Make sure the OLX URL is valid and points to a listing page.
 * Telegram commands must be sent from the chat specified by `CHAT_ID`.
 
----
-
-Let me know if you'd like a Polish version or additional usage instructions.
