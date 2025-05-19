@@ -11,7 +11,7 @@ async function main() {
 	const newestItem = await browser.getNewestItem();
 	if (newestItem) {
 		logger.info("New item found:", newestItem);
-        await db.insertLastItem(newestItem);
+		await db.insertLastItem(newestItem);
 		await bot.sendOlxItem(newestItem);
 	}
 	logger.info("Waiting 1 hour till next check");
@@ -20,7 +20,7 @@ async function main() {
 
 (async () => {
 	const browser = await createBrowser();
-    await db.initialize();
+	await db.initialize();
 	await browser.initialize();
 	await bot.launch();
 	while (true) {
@@ -28,7 +28,7 @@ async function main() {
 			await main();
 		} catch (error) {
 			logger.error("Error in main loop:", error);
-			await wait(1000*60); // Wait 1 second before retrying
+			await wait(1000 * 60); // Wait 1 second before retrying
 		}
 	}
 })();
