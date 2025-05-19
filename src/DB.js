@@ -47,7 +47,6 @@ class DB {
             INSERT INTO currentLink (url)
             VALUES (?)
         `, [url]);
-        browser.changeUrl(url);
     }
 
     async getCurrentLink() {

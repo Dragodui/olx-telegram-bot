@@ -61,6 +61,7 @@ class Browser {
 	}
 
 	async parseOlxData() {
+		this.url = await db.getCurrentLink();
 		await this.page.goto(this.url, {
 			waitUntil: "domcontentloaded",
 		});
@@ -91,12 +92,9 @@ class Browser {
 		return productData;
 	}
 
-	changeUrl(newUrl) {
-		this.url = newUrl;
-	}
-
 	async getNewestItem() {
 		this.lastItem = await db.getLastItem();
+		this.url = await db.getCurrentLink();
 		await this.page.goto(this.url, {
 			waitUntil: "domcontentloaded",
 		});
