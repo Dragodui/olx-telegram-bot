@@ -6,7 +6,7 @@ import { wait } from "./src/utils.js";
 import logger from "./src/logger.js";
 import { createBrowser } from "./src/Browser.js";
 // TODO: Change ChangeUrl funtion to check if the url is valid(by selectors)
-async function main() {
+async function main(browser) {
 	logger.info("Checking for new items...");
 	const newestItem = await browser.getNewestItem();
 	if (newestItem) {
@@ -19,13 +19,13 @@ async function main() {
 }
 
 (async () => {
-	const browser = await createBrowser();
 	await db.initialize();
+	const browser = await createBrowser();
 	await browser.initialize();
 	await bot.launch();
 	while (true) {
 		try {
-			await main();
+			await main(browser);
 		} catch (error) {
 			logger.error("Error in main loop:", error);
 			await wait(1000 * 60); // Wait 1 second before retrying
