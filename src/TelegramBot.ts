@@ -2,9 +2,14 @@ import { config } from "dotenv";
 import { Telegraf } from "telegraf";
 import { db } from "./DB.js";
 import logger from "./logger.js";
+import type { OlxItem } from "./types";
+
 config();
 class TelegramBot {
-	constructor(token, chatId) {
+	token: string;
+	chatId: number;
+	bot: Telegraf;
+	constructor(token: string, chatId: number) {
 		this.token = token;
 		this.chatId = chatId;
 		this.bot = new Telegraf(token);
@@ -55,7 +60,7 @@ class TelegramBot {
 		});
 	}
 
-	async sendOlxItem(itemData) {
+	async sendOlxItem(itemData: OlxItem) {
 		try {
 			const { title, price, link, image, date } = itemData;
 			const message = `${title} \n${price} \n${link} \n${date}`;
@@ -71,7 +76,7 @@ class TelegramBot {
 		}
 	}
 
-	async sendMultipleOlxItems(items) {
+	async sendMultipleOlxItems(items: OlxItem[]) {
 		for (const item of items) {
 			await this.sendOlxItem(item);
 		}
@@ -80,6 +85,6 @@ class TelegramBot {
 logger.info("Bot token:", process.env.BOT_TOKEN);
 logger.info("Chat ID:", process.env.CHAT_ID);
 export const bot = new TelegramBot(
-	process.env.BOT_TOKEN,
-	Number(process.env.CHAT_ID),
+	process.env.BOT_TOKEN || "",
+	Number(process.env.CHAT_ID || 0),
 );

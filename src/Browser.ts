@@ -1,16 +1,21 @@
 import { connect } from "puppeteer-real-browser";
-import { db } from "./DB.js";
+import { db } from "./DB";
 import { config } from "dotenv";
-import logger from "./logger.js";
+import logger from "./logger";
+//types
+import type { PageWithCursor } from "puppeteer-real-browser";
+import type { OlxItem } from "./types";
+
 config();
 
 class Browser {
 	url = "";
-	page = null;
-	browser = null;
-	lastItem = null;
+	page: PageWithCursor | null = null;
+	// biome-ignore lint/suspicious/noExplicitAny: Private Browser type in library
+	browser: any | null = null;
+	lastItem: OlxItem | null = null;
 
-	constructor(olxUrl) {
+	constructor(olxUrl: string) {
 		this.url = olxUrl;
 	}
 
@@ -62,28 +67,32 @@ class Browser {
 
 	async parseOlxData() {
 		this.url = await db.getCurrentLink();
-		await this.page.goto(this.url, {
+		await this.page?.goto(this.url, {
 			waitUntil: "domcontentloaded",
 		});
 
 		const PRODUCT_SELECTOR = ".css-l9drzq";
-		await this.page.waitForSelector(PRODUCT_SELECTOR, { timeout: 60_000 });
-		const productElements = await this.page.$$(PRODUCT_SELECTOR);
-		const productData = [];
+		await this.page?.waitForSelector(PRODUCT_SELECTOR, { timeout: 60_000 });
+		const productElements = await this.page?.$$(PRODUCT_SELECTOR);
+		const productData: OlxItem[] = [];
+		if (!productElements || productElements.length === 0) {
+			logger.warn("No products found on the page.");
+			return productData;
+		}
 		for (const productElement of productElements) {
 			const title = await productElement.$eval(
 				".css-1g61gc2",
-				(el) => el.innerText,
+				(el) => (el as HTMLDivElement).innerText,
 			);
 			const price = await productElement.$eval(
 				".css-uj7mm0",
-				(el) => el.innerText,
+				(el) => (el as HTMLDivElement).innerText,
 			);
-			const link = await productElement.$eval(".css-1tqlkj0", (el) => el.href);
+			const link = await productElement.$eval(".css-1tqlkj0", (el) => (el as HTMLLinkElement).href);
 			const image = await productElement.$eval("img", (el) => el.src);
 			const date = await productElement.$eval(
 				".css-vbz67q",
-				(el) => el.innerText,
+				(el) => (el as HTMLDivElement).innerText,
 			);
 
 			productData.push({ title, price, link, image, date });
@@ -95,22 +104,30 @@ class Browser {
 	async getNewestItem() {
 		this.lastItem = await db.getLastItem();
 		this.url = await db.getCurrentLink();
+		if (!this.page) {
+			throw new Error("Page is not initialized");
+		}
 		await this.page.goto(this.url, {
 			waitUntil: "domcontentloaded",
 		});
 		const PRODUCT_SELECTOR = ".css-l9drzq";
-		const newestProduct = (await this.page.$$(PRODUCT_SELECTOR))[0];
+		const productElements = await this.page.$$(PRODUCT_SELECTOR);
+		if (!productElements || productElements.length === 0) {
+			logger.warn("No products found on the page.");
+			return null;
+		}
+		const newestProduct = productElements[0];
 		const title = await newestProduct.$eval(
 			".css-1g61gc2",
-			(el) => el.innerText,
+			(el) => (el as HTMLDivElement).innerText,
 		);
 		const price = await newestProduct.$eval(
 			".css-uj7mm0",
-			(el) => el.innerText,
+			(el) => (el as HTMLDivElement).innerText,
 		);
-		const link = await newestProduct.$eval(".css-1tqlkj0", (el) => el.href);
+		const link = await newestProduct.$eval(".css-1tqlkj0", (el) => (el as  HTMLLinkElement).href);
 		const image = await newestProduct.$eval("img", (el) => el.src);
-		const date = await newestProduct.$eval(".css-vbz67q", (el) => el.innerText);
+		const date = await newestProduct.$eval(".css-vbz67q", (el) => (el as HTMLDivElement).innerText);
 
 		const productData = { title, price, link, image, date };
 		logger.info("Product data:", productData);
@@ -123,6 +140,7 @@ class Browser {
 		return null;
 	}
 }
+export default Browser;
 export const createBrowser = async () => {
 	const link = (await db.getCurrentLink()) || process.env.OLX_URL;
 	return new Browser(link);

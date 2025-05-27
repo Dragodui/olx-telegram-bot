@@ -1,12 +1,14 @@
 import { config } from "dotenv";
 config();
-import { db } from "./src/DB.js";
-import { bot } from "./src/TelegramBot.js";
-import { wait } from "./src/utils.js";
-import logger from "./src/logger.js";
-import { createBrowser } from "./src/Browser.js";
+import { db } from "./src/DB";
+import { bot } from "./src/TelegramBot";
+import { wait } from "./src/utils";
+import logger from "./src/logger";
+import { createBrowser } from "./src/Browser";
+import type Browser from "./src/Browser";
+
 // TODO: Change ChangeUrl funtion to check if the url is valid(by selectors)
-async function main(browser) {
+async function main(browser: Browser) {
 	logger.info("Checking for new items...");
 	const newestItem = await browser.getNewestItem();
 	if (newestItem) {

@@ -1,8 +1,10 @@
 import sqlite3 from "sqlite3";
-import { open } from "sqlite";
-import logger from "./logger.js";
+import { open, type Database } from "sqlite";
+import logger from "./logger";
+import type { OlxItem } from "./types";
 
 class DB {
+	db: Database | null;
 	constructor() {
 		this.db = null;
 	}
@@ -13,7 +15,7 @@ class DB {
 			driver: sqlite3.Database,
 		});
 
-		await this.db.exec(`
+		await this.db?.exec(`
             CREATE TABLE IF NOT EXISTS lastItem (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT,
@@ -24,7 +26,7 @@ class DB {
             )
         `);
 
-		this.db.exec(`
+		this.db?.exec(`
             CREATE TABLE IF NOT EXISTS currentLink (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 url TEXT
@@ -32,9 +34,9 @@ class DB {
 		logger.info("Database initialized");
 	}
 
-	async insertLastItem(item) {
-		await this.db.run("DELETE FROM lastItem");
-		await this.db.run(
+	async insertLastItem(item: OlxItem) {
+		await this.db?.run("DELETE FROM lastItem");
+		await this.db?.run(
 			`
             INSERT INTO lastItem (title, price, link, image, date)
             VALUES (?, ?, ?, ?, ?)
@@ -43,9 +45,9 @@ class DB {
 		);
 	}
 
-	async insertCurrentLink(url) {
-		await this.db.run("DELETE FROM currentLink");
-		await this.db.run(
+	async insertCurrentLink(url: string) {
+		await this.db?.run("DELETE FROM currentLink");
+		await this.db?.run(
 			`
             INSERT INTO currentLink (url)
             VALUES (?)
@@ -53,16 +55,16 @@ class DB {
     }
 
 	async getCurrentLink() {
-		const result = await this.db.get("SELECT url FROM currentLink LIMIT 1");
+		const result = await this.db?.get("SELECT url FROM currentLink LIMIT 1");
 		return result ? result.url : null;
 	}
 
 	async getAllItems() {
-		return await this.db.all("SELECT * FROM items");
+		return await this.db?.all("SELECT * FROM items");
 	}
 
 	async getLastItem() {
-		const result = await this.db.get(
+		const result = await this.db?.get(
 			"SELECT * FROM lastItem ORDER BY id DESC LIMIT 1",
 		);
 		return result
